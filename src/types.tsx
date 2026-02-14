@@ -16,6 +16,10 @@ export interface TreeNodeList {
   parentId: string | null;
 }
 
+export interface TreeNodeWithChildren extends TreeNodeList {
+  children: TreeNodeWithChildren[];
+}
+
 export enum ListPosition {
   START = '+',
   END = '-',

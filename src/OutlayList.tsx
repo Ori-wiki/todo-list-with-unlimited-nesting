@@ -1,12 +1,41 @@
 import { ListItemIcon } from './assets/icon';
 import OutlayListItem from './OutlayListItem';
-import { TreeNodeList } from './types';
+import { TreeNodeList, TreeNodeWithChildren } from './types';
 
 interface OutlayListProps {
   treeNodeList: TreeNodeList[];
 }
 
+const buildTree = (treeNodeList: TreeNodeList[]): TreeNodeWithChildren[] => {
+  const nodeMap = new Map<string, TreeNodeWithChildren>();
+  const roots: TreeNodeWithChildren[] = [];
+
+  treeNodeList.forEach((node) => {
+    nodeMap.set(node.body.id, { ...node, children: [] });
+  });
+
+  nodeMap.forEach((node) => {
+    if (!node.parentId) {
+      roots.push(node);
+      return;
+    }
+
+    const parent = nodeMap.get(node.parentId);
+
+    if (parent) {
+      parent.children.push(node);
+      return;
+    }
+
+    roots.push(node);
+  });
+
+  return roots;
+};
+
 export const OutlayList = ({ treeNodeList }: OutlayListProps) => {
+  const tree = buildTree(treeNodeList);
+
   return (
     <div className='p-4 overflow-y-auto flex-grow flex flex-col'>
       <table className='w-full border-collapse'>
@@ -30,10 +59,15 @@ export const OutlayList = ({ treeNodeList }: OutlayListProps) => {
         </thead>
 
         <tbody>
-          {treeNodeList.map((item) => {
-            console.log(item);
-            return <OutlayListItem item={item} />;
-          })}
+          {tree.map((item, index) => (
+            <OutlayListItem
+              key={item.body.id}
+              item={item}
+              ancestorsHasNext={[]}
+              isLast={index === tree.length - 1}
+              isFirstChild={false}
+            />
+          ))}
         </tbody>
       </table>
     </div>

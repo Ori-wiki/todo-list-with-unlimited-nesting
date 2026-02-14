@@ -8,50 +8,43 @@ interface ListConnectionProps {
   children: React.ReactNode;
 }
 
-const ListConnection = ({
-  listPosition,
-  deep,
-  children,
-}: ListConnectionProps) => {
+const ListConnection = ({ listPosition, deep, children }: ListConnectionProps) => {
   const data = useMemo(
     () => listPosition.map((position) => ({ position, id: getUUID() })),
     [listPosition, deep]
   );
 
   return (
-    <div className='min-h-8 flex pr-8'>
+    <div className='min-h-[30px] flex pr-[30px]'>
       {data.map((el) => (
-        <div key={el.id} className='w-8 h-full relative'>
-          {el.position === ListPosition.BOUND && (
-            <>
-              <div className='absolute left-1/2 -top-1/2 w-0.5 h-[200%] bg-[#666]' />
-            </>
-          )}
+        <div key={el.id} className='w-[30px] h-full relative'>
+          {el.position === ListPosition.BOUND && <CenterVerticalLine />}
 
           {el.position === ListPosition.START && (
             <>
-              <div className='absolute left-1/2 -top-1/2 w-0.5 h-[200%] bg-[#666]' />
-              <div className='absolute left-1/2 -top-1/2 w-full h-0.5 bg-[#666]' />
+              <CenterVerticalLine />
+              <CenterHorizontalHalfLine />
             </>
           )}
 
           {el.position === ListPosition.CENTER && (
             <>
-              <div className='absolute left-1/2 -top-1/2 w-0.5 h-[200%] bg-[#666]' />
-              <div className='absolute left-1/2 -top-1/2 w-full h-0.5 bg-[#666]' />
+              <CenterVerticalLine />
+              <CenterHorizontalHalfLine />
             </>
           )}
 
           {el.position === ListPosition.END && (
             <>
-              <div className='absolute left-1/2 -top-1/2 w-full h-0.5 bg-[#666]' />
-              <div className='absolute left-1/2 -top-1/2 w-0.5 h-full bg-[#666]' />
+              <CenterHorizontalHalfLine />
+              <CenterVerticalHalfLine />
             </>
           )}
         </div>
       ))}
+
       <div
-        className='relative z-10 pl-8 w-8 h-full flex justify-center items-center'
+        className='relative z-10 pl-[30px] w-[30px] h-full flex justify-center items-center'
         onDoubleClick={(e) => e.stopPropagation()}
       >
         {children}
@@ -59,4 +52,17 @@ const ListConnection = ({
     </div>
   );
 };
+
+function CenterVerticalLine() {
+  return <div className='absolute left-1/2 -top-1/2 w-[2px] h-[200%] bg-[#666]' />;
+}
+
+function CenterVerticalHalfLine() {
+  return <div className='absolute left-1/2 -top-1/2 w-[2px] h-full bg-[#666]' />;
+}
+
+function CenterHorizontalHalfLine() {
+  return <div className='absolute left-1/2 top-1/2 w-full h-[2px] bg-[#666]' />;
+}
+
 export default ListConnection;
