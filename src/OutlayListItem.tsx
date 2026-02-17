@@ -7,6 +7,8 @@ interface TreeNode {
   ancestorsHasNext: boolean[];
   isLast: boolean;
   isFirstChild: boolean;
+  onCreate: (parentId: string | null) => void;
+  onDelete: (id: string) => void;
 }
 
 const OutlayListItem = ({
@@ -14,6 +16,8 @@ const OutlayListItem = ({
   ancestorsHasNext,
   isLast,
   isFirstChild,
+  onCreate,
+  onDelete,
 }: TreeNode) => {
   const listPosition = [
     ...ancestorsHasNext.map((hasNext) =>
@@ -38,12 +42,14 @@ const OutlayListItem = ({
               <button
                 className='w-[30px] h-[30px] relative z-10 flex'
                 title='Create child element'
+                onClick={() => onCreate(item.body.id)}
               >
                 <ListItemIcon />
               </button>
               <button
                 className='w-[30px] h-[30px] relative z-10 flex'
                 title='Delete element'
+                onClick={() => onDelete(item.body.id)}
               >
                 <TrashItemIcon />
               </button>
@@ -62,6 +68,8 @@ const OutlayListItem = ({
           ancestorsHasNext={[...ancestorsHasNext, !isLast]}
           isLast={index === item.children.length - 1}
           isFirstChild={index === 0}
+          onCreate={onCreate}
+          onDelete={onDelete}
         />
       ))}
     </>

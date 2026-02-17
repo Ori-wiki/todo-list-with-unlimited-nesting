@@ -4,6 +4,8 @@ import { TreeNodeList, TreeNodeWithChildren } from './types';
 
 interface OutlayListProps {
   treeNodeList: TreeNodeList[];
+  onCreate: (parentId: string | null) => void;
+  onDelete: (id: string) => void;
 }
 
 const buildTree = (treeNodeList: TreeNodeList[]): TreeNodeWithChildren[] => {
@@ -33,7 +35,7 @@ const buildTree = (treeNodeList: TreeNodeList[]): TreeNodeWithChildren[] => {
   return roots;
 };
 
-export const OutlayList = ({ treeNodeList }: OutlayListProps) => {
+export const OutlayList = ({ treeNodeList, onCreate, onDelete }: OutlayListProps) => {
   const tree = buildTree(treeNodeList);
 
   return (
@@ -46,10 +48,11 @@ export const OutlayList = ({ treeNodeList }: OutlayListProps) => {
                 <button
                   className='w-8 h-8 relative z-10 flex'
                   title='Создать корневой элемент'
+                  onClick={() => onCreate(null)}
                 >
                   <ListItemIcon />
                 </button>
-                <span className=''>Уровень</span>
+                <span>Уровень</span>
               </span>
             </th>
             <th className='p-2 min-w-[400px]'>Наименование</th>
@@ -66,6 +69,8 @@ export const OutlayList = ({ treeNodeList }: OutlayListProps) => {
               ancestorsHasNext={[]}
               isLast={index === tree.length - 1}
               isFirstChild={false}
+              onCreate={onCreate}
+              onDelete={onDelete}
             />
           ))}
         </tbody>
