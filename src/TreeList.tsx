@@ -55,13 +55,29 @@ export const TreeList = () => {
     });
   };
 
+  const handleUpdate = (
+    id: string,
+    body: Partial<Pick<TreeNodeList['body'], 'name' | 'count' | 'sum'>>
+  ) => {
+    setTreeList((prev) =>
+      prev.map((node) =>
+        node.body.id === id ? { ...node, body: { ...node.body, ...body } } : node
+      )
+    );
+  };
+
   return (
     <>
       <div className='p-5 text-[#666]'>
         *** Для создания элемента используйте иконку в строке родителя. Удаление удаляет элемент вместе с дочерними.
       </div>
       <div>
-        <OutlayList treeNodeList={treeList} onCreate={handleCreate} onDelete={handleDelete} />
+        <OutlayList
+          treeNodeList={treeList}
+          onCreate={handleCreate}
+          onDelete={handleDelete}
+          onUpdate={handleUpdate}
+        />
       </div>
     </>
   );

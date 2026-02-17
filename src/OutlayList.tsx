@@ -6,6 +6,10 @@ interface OutlayListProps {
   treeNodeList: TreeNodeList[];
   onCreate: (parentId: string | null) => void;
   onDelete: (id: string) => void;
+  onUpdate: (
+    id: string,
+    body: Partial<Pick<TreeNodeList['body'], 'name' | 'count' | 'sum'>>,
+  ) => void;
 }
 
 const buildTree = (treeNodeList: TreeNodeList[]): TreeNodeWithChildren[] => {
@@ -35,7 +39,12 @@ const buildTree = (treeNodeList: TreeNodeList[]): TreeNodeWithChildren[] => {
   return roots;
 };
 
-export const OutlayList = ({ treeNodeList, onCreate, onDelete }: OutlayListProps) => {
+export const OutlayList = ({
+  treeNodeList,
+  onCreate,
+  onDelete,
+  onUpdate,
+}: OutlayListProps) => {
   const tree = buildTree(treeNodeList);
 
   return (
@@ -55,9 +64,9 @@ export const OutlayList = ({ treeNodeList, onCreate, onDelete }: OutlayListProps
                 <span>Уровень</span>
               </span>
             </th>
-            <th className='p-2 min-w-[400px]'>Наименование</th>
-            <th className='p-2 min-w-[200px]'>Кол-во</th>
-            <th className='p-2 min-w-[200px]'>Сумма</th>
+            <th className='p-2 pl-4 min-w-[400px]'>Наименование</th>
+            <th className='p-2 pl-4 min-w-[200px]'>Кол-во</th>
+            <th className='p-2 pl-4 min-w-[200px]'>Сумма</th>
           </tr>
         </thead>
 
@@ -71,6 +80,7 @@ export const OutlayList = ({ treeNodeList, onCreate, onDelete }: OutlayListProps
               isFirstChild={false}
               onCreate={onCreate}
               onDelete={onDelete}
+              onUpdate={onUpdate}
             />
           ))}
         </tbody>
