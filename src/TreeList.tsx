@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { OutlayList } from './OutlayList';
 import { TreeNodeList } from './types';
 import { getUUID } from './utils/getUUID';
@@ -21,7 +21,7 @@ const initialTreeList: TreeNodeList[] = [
 export const TreeList = () => {
   const [treeList, setTreeList] = useState<TreeNodeList[]>(initialTreeList);
 
-  const handleCreate = (parentId: string | null) => {
+  const handleCreate = useCallback((parentId: string | null) => {
     const newNode: TreeNodeList = {
       body: {
         id: getUUID(),
@@ -33,9 +33,9 @@ export const TreeList = () => {
     };
 
     setTreeList((prev) => [...prev, newNode]);
-  };
+  }, []);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = useCallback((id: string) => {
     setTreeList((prev) => {
       const idsToDelete = new Set<string>([id]);
       let hasChanges = true;
@@ -53,9 +53,9 @@ export const TreeList = () => {
 
       return prev.filter((node) => !idsToDelete.has(node.body.id));
     });
-  };
+  }, []);
 
-  const handleUpdate = (
+  const handleUpdate = useCallback((
     id: string,
     body: Partial<Pick<TreeNodeList['body'], 'name' | 'count' | 'sum'>>
   ) => {
@@ -64,7 +64,7 @@ export const TreeList = () => {
         node.body.id === id ? { ...node, body: { ...node.body, ...body } } : node
       )
     );
-  };
+  }, []);
 
   return (
     <>

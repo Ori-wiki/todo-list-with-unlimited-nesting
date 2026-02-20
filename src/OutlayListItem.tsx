@@ -1,8 +1,9 @@
+import { memo, useMemo } from 'react';
 import { ListItemIcon, TrashItemIcon } from './assets/icon';
 import ListConnection from './ListConnection';
 import { ListPosition, TreeNodeWithChildren } from './types';
 
-interface TreeNode {
+interface OutlayListItemProps {
   item: TreeNodeWithChildren;
   ancestorsHasNext: boolean[];
   isLast: boolean;
@@ -15,7 +16,12 @@ interface TreeNode {
   ) => void;
 }
 
-const OutlayListItem = ({
+const parseOnlyDigits = (value: string): number => {
+  const digits = value.replace(/\D/g, '');
+  return digits === '' ? 0 : Number(digits);
+};
+
+const OutlayListItemComponent = ({
   item,
   ancestorsHasNext,
   isLast,
@@ -23,22 +29,20 @@ const OutlayListItem = ({
   onCreate,
   onDelete,
   onUpdate,
-}: TreeNode) => {
-  const parseOnlyDigits = (value: string): number => {
-    const digits = value.replace(/\D/g, '');
-    return digits === '' ? 0 : Number(digits);
-  };
-
-  const listPosition = [
-    ...ancestorsHasNext.map((hasNext) =>
-      hasNext ? ListPosition.BOUND : ListPosition.EMPTY,
-    ),
-    isLast
-      ? ListPosition.END
-      : isFirstChild && ancestorsHasNext.length > 0
-        ? ListPosition.START
-        : ListPosition.CENTER,
-  ];
+}: OutlayListItemProps) => {
+  const listPosition = useMemo(
+    () => [
+      ...ancestorsHasNext.map((hasNext) =>
+        hasNext ? ListPosition.BOUND : ListPosition.EMPTY,
+      ),
+      isLast
+        ? ListPosition.END
+        : isFirstChild && ancestorsHasNext.length > 0
+          ? ListPosition.START
+          : ListPosition.CENTER,
+    ],
+    [ancestorsHasNext, isFirstChild, isLast],
+  );
 
   return (
     <>
@@ -112,5 +116,7 @@ const OutlayListItem = ({
     </>
   );
 };
+
+const OutlayListItem = memo(OutlayListItemComponent);
 
 export default OutlayListItem;
