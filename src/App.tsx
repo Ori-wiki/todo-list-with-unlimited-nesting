@@ -2,8 +2,8 @@ import { TreeList } from './TreeList';
 
 function App() {
   return (
-    <div className='flex flex-col w-full max-w-[1280px] min-h-screen p-4 my-0 mx-auto'>
-      <TreeList></TreeList>
+    <div className='mx-auto flex min-h-screen w-full max-w-[1280px] flex-col px-4 py-6'>
+      <TreeList />
     </div>
   );
 }

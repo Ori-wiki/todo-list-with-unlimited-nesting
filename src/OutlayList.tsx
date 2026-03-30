@@ -1,43 +1,15 @@
+import { useMemo } from 'react';
 import { ListItemIcon } from './assets/icon';
 import OutlayListItem from './OutlayListItem';
-import { TreeNodeList, TreeNodeWithChildren } from './types';
+import { TreeNodeList, TreeNodePatch } from './types';
+import { buildTree } from './utils/tree';
 
 interface OutlayListProps {
   treeNodeList: TreeNodeList[];
   onCreate: (parentId: string | null) => void;
   onDelete: (id: string) => void;
-  onUpdate: (
-    id: string,
-    body: Partial<Pick<TreeNodeList['body'], 'name' | 'count' | 'sum'>>,
-  ) => void;
+  onUpdate: (id: string, body: TreeNodePatch) => void;
 }
-
-const buildTree = (treeNodeList: TreeNodeList[]): TreeNodeWithChildren[] => {
-  const nodeMap = new Map<string, TreeNodeWithChildren>();
-  const roots: TreeNodeWithChildren[] = [];
-
-  treeNodeList.forEach((node) => {
-    nodeMap.set(node.body.id, { ...node, children: [] });
-  });
-
-  nodeMap.forEach((node) => {
-    if (!node.parentId) {
-      roots.push(node);
-      return;
-    }
-
-    const parent = nodeMap.get(node.parentId);
-
-    if (parent) {
-      parent.children.push(node);
-      return;
-    }
-
-    roots.push(node);
-  });
-
-  return roots;
-};
 
 export const OutlayList = ({
   treeNodeList,
@@ -45,17 +17,17 @@ export const OutlayList = ({
   onDelete,
   onUpdate,
 }: OutlayListProps) => {
-  const tree = buildTree(treeNodeList);
+  const tree = useMemo(() => buildTree(treeNodeList), [treeNodeList]);
 
   return (
-    <div className='p-4 overflow-y-auto flex-grow flex flex-col'>
+    <div className='flex flex-grow flex-col overflow-y-auto p-4'>
       <table className='w-full border-collapse'>
         <thead>
-          <tr className='text-[#A1A1AA] text-left'>
+          <tr className='text-left text-[#A1A1AA]'>
             <th className='p-2'>
-              <span className='flex gap-3 relative items-center'>
+              <span className='relative flex items-center gap-3'>
                 <button
-                  className='w-8 h-8 relative z-10 flex'
+                  className='relative z-10 flex h-8 w-8'
                   title='Создать корневой элемент'
                   onClick={() => onCreate(null)}
                 >
@@ -64,9 +36,9 @@ export const OutlayList = ({
                 <span>Уровень</span>
               </span>
             </th>
-            <th className='p-2 pl-4 min-w-[400px]'>Наименование</th>
-            <th className='p-2 pl-4 min-w-[200px]'>Кол-во</th>
-            <th className='p-2 pl-4 min-w-[200px]'>Сумма</th>
+            <th className='min-w-[400px] p-2 pl-4'>Наименование</th>
+            <th className='min-w-[200px] p-2 pl-4'>Кол-во</th>
+            <th className='min-w-[200px] p-2 pl-4'>Сумма</th>
           </tr>
         </thead>
 

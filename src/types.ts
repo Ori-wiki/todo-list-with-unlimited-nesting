@@ -1,15 +1,9 @@
-export interface DataBodyItem {
+export interface TreeNodeBody {
+  id: string;
   name: string;
   count: number;
   sum: number;
 }
-
-export interface DataItem extends DataBodyItem {
-  id: string;
-  children: DataItem[];
-}
-
-export type TreeNodeBody = Omit<DataItem, 'children'>;
 
 export interface TreeNodeList {
   body: TreeNodeBody;
@@ -20,10 +14,12 @@ export interface TreeNodeWithChildren extends TreeNodeList {
   children: TreeNodeWithChildren[];
 }
 
+export type TreeNodePatch = Partial<Pick<TreeNodeBody, 'name' | 'count' | 'sum'>>;
+
 export enum ListPosition {
-  START = '+',
-  END = '-',
-  CENTER = '>',
-  EMPTY = '#',
-  BOUND = '|',
+  START = 'start',
+  END = 'end',
+  CENTER = 'center',
+  EMPTY = 'empty',
+  BOUND = 'bound',
 }

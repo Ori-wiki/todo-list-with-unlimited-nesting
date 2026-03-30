@@ -1,40 +1,32 @@
-import { useMemo } from 'react';
 import { ListPosition } from './types';
-import { getUUID } from './utils/getUUID';
 
 interface ListConnectionProps {
   listPosition: ListPosition[];
-  deep: number;
   children: React.ReactNode;
 }
 
-const ListConnection = ({ listPosition, deep, children }: ListConnectionProps) => {
-  const data = useMemo(
-    () => listPosition.map((position) => ({ position, id: getUUID() })),
-    [listPosition, deep]
-  );
-
+const ListConnection = ({ listPosition, children }: ListConnectionProps) => {
   return (
-    <div className='min-h-[30px] flex pr-[30px]'>
-      {data.map((el) => (
-        <div key={el.id} className='w-[30px] h-full relative'>
-          {el.position === ListPosition.BOUND && <CenterVerticalLine />}
+    <div className='flex min-h-[30px] pr-[30px]'>
+      {listPosition.map((position, index) => (
+        <div key={`${position}-${index}`} className='relative h-full w-[30px]'>
+          {position === ListPosition.BOUND && <CenterVerticalLine />}
 
-          {el.position === ListPosition.START && (
+          {position === ListPosition.START && (
             <>
               <CenterVerticalLine />
               <CenterHorizontalHalfLine />
             </>
           )}
 
-          {el.position === ListPosition.CENTER && (
+          {position === ListPosition.CENTER && (
             <>
               <CenterVerticalLine />
               <CenterHorizontalHalfLine />
             </>
           )}
 
-          {el.position === ListPosition.END && (
+          {position === ListPosition.END && (
             <>
               <CenterHorizontalHalfLine />
               <CenterVerticalHalfLine />
@@ -44,8 +36,8 @@ const ListConnection = ({ listPosition, deep, children }: ListConnectionProps) =
       ))}
 
       <div
-        className='relative z-10 pl-[30px] w-[30px] h-full flex justify-center items-center'
-        onDoubleClick={(e) => e.stopPropagation()}
+        className='relative z-10 flex h-full w-[30px] items-center justify-center pl-[30px]'
+        onDoubleClick={(event) => event.stopPropagation()}
       >
         {children}
       </div>
@@ -54,15 +46,15 @@ const ListConnection = ({ listPosition, deep, children }: ListConnectionProps) =
 };
 
 function CenterVerticalLine() {
-  return <div className='absolute left-1/2 -top-1/2 w-[2px] h-[200%] bg-[#666]' />;
+  return <div className='absolute left-1/2 -top-1/2 h-[200%] w-[2px] bg-[#666]' />;
 }
 
 function CenterVerticalHalfLine() {
-  return <div className='absolute left-1/2 -top-1/2 w-[2px] h-full bg-[#666]' />;
+  return <div className='absolute left-1/2 -top-1/2 h-full w-[2px] bg-[#666]' />;
 }
 
 function CenterHorizontalHalfLine() {
-  return <div className='absolute left-1/2 top-1/2 w-full h-[2px] bg-[#666]' />;
+  return <div className='absolute left-1/2 top-1/2 h-[2px] w-full bg-[#666]' />;
 }
 
 export default ListConnection;
